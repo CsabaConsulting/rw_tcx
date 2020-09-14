@@ -82,13 +82,17 @@ Future<void> writeTCX(TCXModel tcxInfos, String filename) async {
   // Add lap
   //---------
   String lapContent = '';
-  lapContent = lapContent + addElement('TotalTimeSeconds', tcxInfos.totalTime.toString());
+  lapContent = lapContent +
+      addElement('TotalTimeSeconds', tcxInfos.totalTime.toString());
   // Add Total distace in meters
-  lapContent = lapContent + addElement('DistanceMeters', tcxInfos.totalDistance.toString());
+  lapContent = lapContent +
+      addElement('DistanceMeters', tcxInfos.totalDistance.toString());
   // Add Maximum speed in meter/second
-  lapContent = lapContent + addElement('MaximumSpeed', tcxInfos.maxSpeed.toString());
+  lapContent =
+      lapContent + addElement('MaximumSpeed', tcxInfos.maxSpeed.toString());
   // Add calories
-  lapContent = lapContent + addElement('Calories', tcxInfos.calories.toString());
+  lapContent =
+      lapContent + addElement('Calories', tcxInfos.calories.toString());
   // Add intensity (what is the meaning?)
   lapContent = lapContent + addElement('Intensity', 'Active');
   // Add intensity (what is the meaning?)
