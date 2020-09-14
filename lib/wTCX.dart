@@ -97,7 +97,8 @@ Future<void> writeTCX(TCXModel tcxInfo, String filename) async {
         addElement('MaximumHeartRateBpm', tcxInfo.maximumHeartRate.toString());
   }
   if (tcxInfo.averageCadence != null) {
-    lapContent += addElement('Cadence', tcxInfo.averageCadence.toString());
+    final cadence = min(max(tcxInfo.averageCadence, 0), 254).toInt();
+    lapContent += addElement('Cadence', cadence.toString());
   }
 
   // Add calories
