@@ -38,34 +38,34 @@ Future<void> writeTCX(TCXModel tcxInfos, String filename) async {
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns4="http://www.garmin.com/xmlschemas/ProfileExtension/v1">\n""";
 
   final String tailActivity = """      <Creator xsi:type="Device_t">
-        <Name>rw_TCX</Name>
-        <UnitId>3873921795</UnitId>
-        <ProductID>1736</ProductID>
+        <Name>${tcxInfos.deviceName}</Name>
+        <UnitId>${tcxInfos.unitID}</UnitId>
+        <ProductID>${tcxInfos.productID}</ProductID>
         <Version>
-          <VersionMajor>4</VersionMajor>
-          <VersionMinor>20</VersionMinor>
-          <BuildMajor>0</BuildMajor>
-          <BuildMinor>0</BuildMinor>
+          <VersionMajor>${tcxInfos.versionMajor}</VersionMajor>
+          <VersionMinor>${tcxInfos.versionMinor}</VersionMinor>
+          <BuildMajor>${tcxInfos.buildMajor}</BuildMajor>
+          <BuildMinor>${tcxInfos.buildMinor}</BuildMinor>
         </Version>
       </Creator>
   </Activity> """;
 
   final String tail = """    <Author xsi:type="Application_t">
-    <Name>Connect Api</Name>
+    <Name>${tcxInfos.author}</Name>
     <Build>
       <Version>
-        <VersionMajor>0</VersionMajor>
-        <VersionMinor>0</VersionMinor>
-        <BuildMajor>0</BuildMajor>
-        <BuildMinor>0</BuildMinor>
+        <VersionMajor>${tcxInfos.versionMajor}</VersionMajor>
+        <VersionMinor>${tcxInfos.versionMinor}</VersionMinor>
+        <BuildMajor>${tcxInfos.buildMajor}</BuildMajor>
+        <BuildMinor>${tcxInfos.buildMinor}</BuildMinor>
       </Version>
     </Build>
-    <LangID>en</LangID>
-    <PartNumber>006-D2449-00</PartNumber>
+    <LangID>${tcxInfos.langID}</LangID>
+    <PartNumber>${tcxInfos.partNumber}</PartNumber>
   </Author>
   </TrainingCenterDatabase>""";
 
-  String activityBiking = """<Activity Sport="Biking">\n""";
+  String activityBiking = """<Activity Sport="${tcxInfos.activityType}">\n""";
 
   String activitiesContent = '';
 
@@ -82,13 +82,13 @@ Future<void> writeTCX(TCXModel tcxInfos, String filename) async {
   // Add lap
   //---------
   String lapContent = '';
-  lapContent = lapContent + addElement('TotalTimeSeconds', '1688.0');
+  lapContent = lapContent + addElement('TotalTimeSeconds', tcxInfos.totalTime.toString());
   // Add Total distace in meters
-  lapContent = lapContent + addElement('DistanceMeters', '88888.0');
+  lapContent = lapContent + addElement('DistanceMeters', tcxInfos.totalDistance.toString());
   // Add Maximum speed in meter/second
-  lapContent = lapContent + addElement('MaximumSpeed', '12.8888');
+  lapContent = lapContent + addElement('MaximumSpeed', tcxInfos.maxSpeed.toString());
   // Add calories
-  lapContent = lapContent + addElement('Calories', '12.8888');
+  lapContent = lapContent + addElement('Calories', tcxInfos.calories.toString());
   // Add intensity (what is the meaning?)
   lapContent = lapContent + addElement('Intensity', 'Active');
   // Add intensity (what is the meaning?)
