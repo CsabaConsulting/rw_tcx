@@ -52,7 +52,7 @@ class TrackPoint {
   double distance; // in meters
   DateTime date;
 
-  double cadence; // Not handled yet
+  int cadence;
   double power;
   int heartRate;
 

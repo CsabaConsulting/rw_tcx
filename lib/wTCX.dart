@@ -3,6 +3,7 @@
 // To test on Strava
 
 import 'dart:io';
+import 'dart:math';
 import 'package:path_provider/path_provider.dart';
 
 import 'models/TCXModel.dart';
@@ -146,24 +147,26 @@ String addTrackPoint(TrackPoint point) {
   _returnString = _returnString + addElement('Time', point.timeStamp);
   _returnString = _returnString +
       addPosition(point.latitude.toString(), point.longitude.toString());
-  _returnString =
-      _returnString + addElement('AltitudeMeters', point.altitude.toString());
-  _returnString =
-      _returnString + addElement('DistanceMeters', point.distance.toString());
+  _returnString += addElement('AltitudeMeters', point.altitude.toString());
+  _returnString += addElement('DistanceMeters', point.distance.toString());
+  if (point.cadence != null) {
+    final cadence = min(max(point.cadence, 0), 254).toInt();
+    _returnString += addElement('Cadence', cadence.toString());
+  }
 
   if (point.speed != null) {
-    _returnString = _returnString + addExtension('Speed', point.speed);
+    _returnString += addExtension('Speed', point.speed);
   }
 
   if (point.power != null) {
-    _returnString = _returnString + addExtension('Watts', point.power);
+    _returnString += addExtension('Watts', point.power);
   }
 
   if (point.heartRate != null) {
-    _returnString = _returnString + addHeartRate(point.heartRate);
+    _returnString += addHeartRate(point.heartRate);
   }
 
-  _returnString = _returnString + "</Trackpoint>\n";
+  _returnString += "</Trackpoint>\n";
 
   return _returnString;
 }
