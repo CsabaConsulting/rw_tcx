@@ -151,8 +151,8 @@ String addTrackPoint(TrackPoint point) {
   String _returnString;
 
   _returnString = "<Trackpoint>\n";
-  _returnString = _returnString + addElement('Time', point.timeStamp);
-  _returnString = _returnString +
+  _returnString += addElement('Time', point.timeStamp);
+  _returnString +=
       addPosition(point.latitude.toString(), point.longitude.toString());
   _returnString += addElement('AltitudeMeters', point.altitude.toString());
   _returnString += addElement('DistanceMeters', point.distance.toString());
@@ -190,20 +190,10 @@ String addTrackPoint(TrackPoint point) {
 /// Speed AND Watts in the same extension
 ///
 String addExtension(String tag, double value) {
-  String returnString;
-  String extensionBeg = """<Extensions>\n   <ns3:TPX>\n""";
-  String extensionMid;
-
-  String extensionEnd = """   </ns3:TPX>\n</Extensions>\n""";
-
   double _value = value ?? 0.0;
-
-  extensionMid =
-      '     <ns3:' + tag + '>' + _value.toString() + '</ns3:' + tag + '>\n';
-
-  returnString = extensionBeg + extensionMid + extensionEnd;
-
-  return returnString;
+  return """<Extensions>\n   <ns3:TPX>\n +
+     <ns3:$tag>${_value.toString()}</ns3:$tag>\n +
+   </ns3:TPX>\n</Extensions>\n""";
 }
 
 /// Add heartRate in TCX file to look like
@@ -213,15 +203,10 @@ String addExtension(String tag, double value) {
 ///       </HeartRateBpm>
 ///
 String addHeartRate(int heartRate) {
-  String heartRateContentBeg = """
-                 <HeartRateBpm>
-              <Value>""";
-
-  String heartRateContentEnd = """</Value>
-            </HeartRateBpm>\n""";
   int _heartRate = heartRate ?? 0;
-  String _valueString = _heartRate.toString();
-  return heartRateContentBeg + _valueString + heartRateContentEnd;
+  return """                 <HeartRateBpm>
+              <Value>${_heartRate.toString()}</Value>
+            </HeartRateBpm>\n""";
 }
 
 /// create a position something like
@@ -230,29 +215,16 @@ String addHeartRate(int heartRate) {
 ///   <LongitudeDegrees>5.771340150386095</LongitudeDegrees>
 /// </Position>
 String addPosition(String latitude, String longitude) {
-  String returnString;
-  returnString = '<Position>\n';
-
-  returnString =
-      returnString + '   <LatitudeDegrees>' + latitude + '</LatitudeDegrees>\n';
-  returnString = returnString +
-      '   <LongitudeDegrees>' +
-      longitude +
-      '</LongitudeDegrees>\n';
-
-  returnString = returnString + '</Position>\n';
-
-  return returnString;
+  return """"<Position>\n
+   <LatitudeDegrees>$latitude</LatitudeDegrees>\n
+   <LongitudeDegrees>$longitude</LongitudeDegrees>\n
+</Position>\n""";
 }
 
 /// create XML element
 /// from content string
 String addElement(String tag, String content) {
-  String returnString;
-
-  returnString = '<' + tag + '>' + content + '</' + tag + '>\n';
-
-  return returnString;
+  return '<$tag>$content</$tag>\n';
 }
 
 /// create XML attribute
@@ -260,12 +232,7 @@ String addElement(String tag, String content) {
 
 String addAttribute(
     String tag, String attribute, String value, String content) {
-  String returnString;
-
-  returnString = '<' + tag + ' ' + attribute + '="' + value + '">\n';
-  returnString = returnString + content + '</' + tag + '>\n';
-
-  return returnString;
+  return '<$tag $attribute="$value">\n$content</$tag>\n';
 }
 
 /// Create timestamp for <Time> element in TCX file
@@ -274,10 +241,5 @@ String addAttribute(
 /// utc time
 /// Need to add T in the middle
 String createTimestamp(DateTime dateTime) {
-  String _returnString;
-
-  _returnString = dateTime.toUtc().toString();
-  _returnString = _returnString.replaceFirst(' ', 'T');
-
-  return _returnString;
+  return dateTime.toUtc().toString().replaceFirst(' ', 'T');
 }
