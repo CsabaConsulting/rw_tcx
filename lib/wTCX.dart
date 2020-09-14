@@ -14,8 +14,8 @@ import 'logTool.dart';
 /// Store the TCX file in genera
 /// TODO: Add return code
 ///
-// Future<String> writeTCX(TCXModel tcxInfos, String filename) async {
-Future<void> writeTCX(TCXModel tcxInfos, String filename) async {
+// Future<String> writeTCX(TCXModel tcxInfo, String filename) async {
+Future<void> writeTCX(TCXModel tcxInfo, String filename) async {
   Future<File> _localFile(String fileName) async {
     final directory = await getApplicationDocumentsDirectory();
     var path = directory.path;
@@ -39,34 +39,34 @@ Future<void> writeTCX(TCXModel tcxInfos, String filename) async {
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns4="http://www.garmin.com/xmlschemas/ProfileExtension/v1">\n""";
 
   final String tailActivity = """      <Creator xsi:type="Device_t">
-        <Name>${tcxInfos.deviceName}</Name>
-        <UnitId>${tcxInfos.unitID}</UnitId>
-        <ProductID>${tcxInfos.productID}</ProductID>
+        <Name>${tcxInfo.deviceName}</Name>
+        <UnitId>${tcxInfo.unitID}</UnitId>
+        <ProductID>${tcxInfo.productID}</ProductID>
         <Version>
-          <VersionMajor>${tcxInfos.versionMajor}</VersionMajor>
-          <VersionMinor>${tcxInfos.versionMinor}</VersionMinor>
-          <BuildMajor>${tcxInfos.buildMajor}</BuildMajor>
-          <BuildMinor>${tcxInfos.buildMinor}</BuildMinor>
+          <VersionMajor>${tcxInfo.versionMajor}</VersionMajor>
+          <VersionMinor>${tcxInfo.versionMinor}</VersionMinor>
+          <BuildMajor>${tcxInfo.buildMajor}</BuildMajor>
+          <BuildMinor>${tcxInfo.buildMinor}</BuildMinor>
         </Version>
       </Creator>
   </Activity> """;
 
   final String tail = """    <Author xsi:type="Application_t">
-    <Name>${tcxInfos.author}</Name>
+    <Name>${tcxInfo.author}</Name>
     <Build>
       <Version>
-        <VersionMajor>${tcxInfos.versionMajor}</VersionMajor>
-        <VersionMinor>${tcxInfos.versionMinor}</VersionMinor>
-        <BuildMajor>${tcxInfos.buildMajor}</BuildMajor>
-        <BuildMinor>${tcxInfos.buildMinor}</BuildMinor>
+        <VersionMajor>${tcxInfo.versionMajor}</VersionMajor>
+        <VersionMinor>${tcxInfo.versionMinor}</VersionMinor>
+        <BuildMajor>${tcxInfo.buildMajor}</BuildMajor>
+        <BuildMinor>${tcxInfo.buildMinor}</BuildMinor>
       </Version>
     </Build>
-    <LangID>${tcxInfos.langID}</LangID>
-    <PartNumber>${tcxInfos.partNumber}</PartNumber>
+    <LangID>${tcxInfo.langID}</LangID>
+    <PartNumber>${tcxInfo.partNumber}</PartNumber>
   </Author>
   </TrainingCenterDatabase>""";
 
-  String activityBiking = """<Activity Sport="${tcxInfos.activityType}">\n""";
+  String activityBiking = """<Activity Sport="${tcxInfo.activityType}">\n""";
 
   String activitiesContent = '';
 
@@ -75,35 +75,31 @@ Future<void> writeTCX(TCXModel tcxInfos, String filename) async {
   String activityContent = activityBiking;
 
   // Add ID
-  activityContent = activityContent +
-      addElement('Id', createTimestamp(tcxInfos.dateActivity));
+  activityContent += addElement('Id', createTimestamp(tcxInfo.dateActivity));
 
   displayInfo(' $activityContent');
 
   // Add lap
   //---------
   String lapContent = '';
-  lapContent = lapContent +
-      addElement('TotalTimeSeconds', tcxInfos.totalTime.toString());
-  // Add Total distace in meters
-  lapContent = lapContent +
-      addElement('DistanceMeters', tcxInfos.totalDistance.toString());
+  lapContent += addElement('TotalTimeSeconds', tcxInfo.totalTime.toString());
+  // Add Total distance in meters
+  lapContent += addElement('DistanceMeters', tcxInfo.totalDistance.toString());
   // Add Maximum speed in meter/second
   lapContent =
       lapContent + addElement('MaximumSpeed', tcxInfos.maxSpeed.toString());
   // Add calories
-  lapContent =
-      lapContent + addElement('Calories', tcxInfos.calories.toString());
+  lapContent += addElement('Calories', tcxInfo.calories.toString());
   // Add intensity (what is the meaning?)
-  lapContent = lapContent + addElement('Intensity', 'Active');
+  lapContent += addElement('Intensity', 'Active');
   // Add intensity (what is the meaning?)
-  lapContent = lapContent + addElement('TriggerMethod', 'Manual');
+  lapContent += addElement('TriggerMethod', 'Manual');
 
   // Add track inside the lap
   String trackContent = '';
   int counterTrackpoint = 0;
 
-  for (var point in tcxInfos.points) {
+  for (var point in tcxInfo.points) {
     String trackPoint = addTrackPoint(point);
     counterTrackpoint++;
 
@@ -116,9 +112,8 @@ Future<void> writeTCX(TCXModel tcxInfos, String filename) async {
   }
   lapContent = lapContent + addElement('Track', trackContent);
 
-  activityContent = activityContent +
-      addAttribute('Lap', 'StartTime', createTimestamp(tcxInfos.dateActivity),
-          lapContent);
+  activityContent += addAttribute(
+      'Lap', 'StartTime', createTimestamp(tcxInfo.dateActivity), lapContent);
 
   activityContent = activityContent + tailActivity;
 
