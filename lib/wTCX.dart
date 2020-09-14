@@ -86,8 +86,20 @@ Future<void> writeTCX(TCXModel tcxInfo, String filename) async {
   // Add Total distance in meters
   lapContent += addElement('DistanceMeters', tcxInfo.totalDistance.toString());
   // Add Maximum speed in meter/second
-  lapContent =
-      lapContent + addElement('MaximumSpeed', tcxInfos.maxSpeed.toString());
+  lapContent += addElement('MaximumSpeed', tcxInfo.maxSpeed.toString());
+
+  if (tcxInfo.averageHeartRate != null) {
+    lapContent +=
+        addElement('AverageHeartRateBpm', tcxInfo.averageHeartRate.toString());
+  }
+  if (tcxInfo.maximumHeartRate != null) {
+    lapContent +=
+        addElement('MaximumHeartRateBpm', tcxInfo.maximumHeartRate.toString());
+  }
+  if (tcxInfo.averageCadence != null) {
+    lapContent += addElement('Cadence', tcxInfo.averageCadence.toString());
+  }
+
   // Add calories
   lapContent += addElement('Calories', tcxInfo.calories.toString());
   // Add intensity (what is the meaning?)

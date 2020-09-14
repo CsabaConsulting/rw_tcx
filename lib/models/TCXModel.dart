@@ -8,6 +8,9 @@ class TCXModel {
   double totalTime; // in seconds
   double maxSpeed; // in m/s
   int calories;
+  int averageHeartRate;
+  int maximumHeartRate;
+  int averageCadence;
   String intensity;
   DateTime dateActivity; // Date of the activity
   List<TrackPoint> points;
