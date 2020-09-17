@@ -9,6 +9,66 @@ import 'package:path_provider/path_provider.dart';
 import 'models/TCXModel.dart';
 import 'logTool.dart';
 
+class StatisticsAccumulator {
+  bool calculateMaxSpeed;
+  bool calculateAverageHeartRate;
+  bool calculateMaxHeartRate;
+  bool calculateAverageCadence;
+
+  double maxSpeed;
+  int heartRateSum;
+  int heartRateCount;
+  int maxHeartRate;
+  int cadenceSum;
+  int cadenceCount;
+
+  int get averageHeartRate =>
+      heartRateCount > 0 ? heartRateSum / heartRateCount : 0;
+  int get averageCadence => cadenceCount > 0 ? cadenceSum / cadenceCount : 0;
+
+  StatisticsAccumulator(
+      {this.calculateMaxSpeed,
+      this.calculateAverageHeartRate,
+      this.calculateMaxHeartRate,
+      this.calculateAverageCadence}) {
+    if (calculateMaxSpeed) {
+      maxSpeed = 0;
+    }
+    if (calculateAverageHeartRate) {
+      heartRateSum = 0;
+      heartRateCount = 0;
+    }
+    if (calculateMaxHeartRate) {
+      maxHeartRate = 0;
+    }
+    if (calculateAverageCadence) {
+      cadenceSum = 0;
+      cadenceCount = 0;
+    }
+  }
+
+  processTrackPoint(TrackPoint trackPoint) {
+    if (calculateMaxSpeed && trackPoint.speed != null) {
+      maxSpeed = max(maxSpeed, trackPoint.speed);
+    }
+    if (trackPoint.heartRate != null && trackPoint.heartRate > 0) {
+      if (calculateAverageHeartRate) {
+        heartRateSum += trackPoint.heartRate;
+        heartRateCount++;
+      }
+      if (calculateMaxHeartRate) {
+        maxHeartRate = max(maxHeartRate, trackPoint.heartRate);
+      }
+    }
+    if (calculateAverageCadence &&
+        trackPoint.cadence != null &&
+        trackPoint.cadence > 0) {
+      cadenceSum += trackPoint.cadence;
+      cadenceCount++;
+    }
+  }
+}
+
 // Generate the TCX file
 /// from a TCX Model
 /// Store the TCX file in genera
@@ -81,10 +141,56 @@ Future<void> writeTCX(TCXModel tcxInfo, String filename) async {
 
   // Add lap
   //---------
+  // Assuming that points are ordered by time stamp ascending
+  TrackPoint lastTrackPoint = tcxInfo.points.last;
+  if (lastTrackPoint != null) {
+    if ((tcxInfo.totalTime == null || tcxInfo.totalTime == 0) &&
+        lastTrackPoint.date != null) {
+      tcxInfo.totalTime = lastTrackPoint.date.millisecondsSinceEpoch / 1000;
+    }
+    if ((tcxInfo.totalDistance == null || tcxInfo.totalDistance == 0) &&
+        lastTrackPoint.distance > 0) {
+      tcxInfo.totalDistance = lastTrackPoint.distance;
+    }
+  }
   String lapContent = '';
   lapContent += addElement('TotalTimeSeconds', tcxInfo.totalTime.toString());
   // Add Total distance in meters
   lapContent += addElement('DistanceMeters', tcxInfo.totalDistance.toString());
+
+  final calculateMaxSpeed = tcxInfo.maxSpeed == null || tcxInfo.maxSpeed == 0;
+  final calculateAverageHeartRate =
+      tcxInfo.averageHeartRate == null || tcxInfo.averageHeartRate == 0;
+  final calculateMaxHeartRate =
+      tcxInfo.maximumHeartRate == null || tcxInfo.maximumHeartRate == 0;
+  final calculateAverageCadence =
+      tcxInfo.averageCadence == null || tcxInfo.averageCadence == 0;
+  StatisticsAccumulator accu;
+  if (calculateMaxSpeed ||
+      calculateAverageHeartRate ||
+      calculateMaxHeartRate ||
+      calculateAverageCadence) {
+    var accuInit = StatisticsAccumulator(
+        calculateMaxSpeed: calculateMaxSpeed,
+        calculateAverageHeartRate: calculateAverageHeartRate,
+        calculateMaxHeartRate: calculateMaxHeartRate,
+        calculateAverageCadence: calculateAverageCadence);
+    accu = tcxInfo.points.fold<StatisticsAccumulator>(accuInit,
+        (accumulator, trackPoint) => accumulator.processTrackPoint(trackPoint));
+  }
+  if (calculateMaxSpeed) {
+    tcxInfo.maxSpeed = accu.maxSpeed;
+  }
+  if (calculateAverageHeartRate) {
+    tcxInfo.averageHeartRate = accu.averageHeartRate;
+  }
+  if (calculateMaxHeartRate) {
+    tcxInfo.maximumHeartRate = accu.maxHeartRate;
+  }
+  if (calculateAverageCadence) {
+    tcxInfo.averageCadence = accu.averageCadence;
+  }
+
   // Add Maximum speed in meter/second
   lapContent += addElement('MaximumSpeed', tcxInfo.maxSpeed.toString());
 
