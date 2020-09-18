@@ -322,7 +322,7 @@ String addHeartRate(int heartRate) {
 ///   <LongitudeDegrees>5.771340150386095</LongitudeDegrees>
 /// </Position>
 String addPosition(String latitude, String longitude) {
-  return """"<Position>\n
+  return """<Position>\n
    <LatitudeDegrees>$latitude</LatitudeDegrees>\n
    <LongitudeDegrees>$longitude</LongitudeDegrees>\n
 </Position>\n""";
