@@ -298,8 +298,8 @@ String addTrackPoint(TrackPoint point) {
 ///
 String addExtension(String tag, double value) {
   double _value = value ?? 0.0;
-  return """<Extensions>\n   <ns3:TPX>\n +
-     <ns3:$tag>${_value.toString()}</ns3:$tag>\n +
+  return """<Extensions>\n   <ns3:TPX>
+     <ns3:$tag>${_value.toString()}</ns3:$tag>
    </ns3:TPX>\n</Extensions>\n""";
 }
 
