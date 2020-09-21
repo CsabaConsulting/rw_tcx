@@ -298,9 +298,11 @@ String addTrackPoint(TrackPoint point) {
 ///
 String addExtension(String tag, double value) {
   double _value = value ?? 0.0;
-  return """<Extensions>\n   <ns3:TPX>
-     <ns3:$tag>${_value.toString()}</ns3:$tag>
-   </ns3:TPX>\n</Extensions>\n""";
+  return """  <Extensions>
+    <ns3:TPX>
+      <ns3:$tag>${_value.toString()}</ns3:$tag>
+    </ns3:TPX>
+  </Extensions>\n""";
 }
 
 /// Add heartRate in TCX file to look like
@@ -322,9 +324,9 @@ String addHeartRate(int heartRate) {
 ///   <LongitudeDegrees>5.771340150386095</LongitudeDegrees>
 /// </Position>
 String addPosition(String latitude, String longitude) {
-  return """<Position>\n
-   <LatitudeDegrees>$latitude</LatitudeDegrees>\n
-   <LongitudeDegrees>$longitude</LongitudeDegrees>\n
+  return """<Position>
+   <LatitudeDegrees>$latitude</LatitudeDegrees>
+   <LongitudeDegrees>$longitude</LongitudeDegrees>
 </Position>\n""";
 }
 
